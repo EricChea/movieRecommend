@@ -11,9 +11,13 @@ def is_csv(filepath):
     return os.path.splitext(filepath)[-1] == '.csv'
 
 
-def read_zipcsv(zippath, compression):
+def read_zipcsv(zippath):
     """
     Loads all csvs in a .zip file into a dictionary as a Pandas DataFrame.
+
+    Parameters
+    ----------
+    zippath: str, path to zipfile with csv files.
     """
 
     _zip = zipfile.ZipFile(zippath)
