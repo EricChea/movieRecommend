@@ -26,7 +26,7 @@ The MovieLens [ml-latest.zip](http://files.grouplens.org/datasets/movielens/ml-l
 Two models are available:
 1. ``recommend.models.memory.Memory``: This is a user-user collaboartaive model.
 2. ``recommend.models.trees``: implements the lightgbm model to predict what a user
-would rank a movie.
+3. ``recommend.models.nn``: implements a nueral net to predict a user's rating of a movie.
 
 Usage
 -----
@@ -47,13 +47,23 @@ To train a regression model run (from the top level directory):
 
 After the process is complete a model will be saved called *trees.predictrating.lgb*.
 This model can be reloaded
-
 ```
 import lightgbm as lgb
 lgb.Booster(model_file='trees.predictrating.lgb')
 
 # X needs to have the dimensions (, 38).
 predicted_scores = lgb.predict(X)
+```
+
+#### Get a users predicted rating for a movie using NN.
+To train the nn run (from the top level directory):
+``python -m recommend.models.nn --data=<PATH TO MOVIELENS DATA>``
+
+After the process is complete a model will be saved called *nn.predictrating.h5*.
+This model can be reloaded
+```
+from keras.models import load_model
+model = load_model('nn.predictrating.h5')
 ```
 
 **Note**: Feature extraction can be found under ``recommend.utils.data.get_features_dependent``

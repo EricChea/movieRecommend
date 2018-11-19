@@ -37,11 +37,11 @@ def main():
         'boosting_type': 'gbdt',
         'objective': 'regression',
         'metric': 'rmse',
-        'max_depth': 16,
-        'num_leaves': 37,
+        'max_depth': 8,
+        'num_leaves': 16,
         'feature_fraction': 0.6,
-        'bagging_fraction': 0.8,
-        'learning_rate': 0.019,
+        'bagging_fraction': 0.4,
+        'learning_rate': 0.03,
         'verbose': 0
     }
 

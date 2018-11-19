@@ -1,5 +1,6 @@
-# Ignore serialized pickle files.
+# Ignore serialized files.
 *.pkl
+*.h5
 
 # Ignore trained models
 *.lgb
