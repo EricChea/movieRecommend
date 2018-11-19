@@ -1,6 +1,15 @@
 # Ignore serialized pickle files.
 *.pkl
 
+# Ignore trained models
+*.lgb
+
+# Ignore images
+*.png
+
+# Ignore python notebooks
+*.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
