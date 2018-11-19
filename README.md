@@ -50,7 +50,7 @@ This model can be reloaded
 
 ```
 import lightgbm as lgb
-lgb.Booster('trees.predictrating.lgb')
+lgb.Booster(model_file='trees.predictrating.lgb')
 
 # X needs to have the dimensions (, 38).
 predicted_scores = lgb.predict(X)
