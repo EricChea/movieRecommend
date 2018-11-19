@@ -55,6 +55,8 @@ def get_features_dependent(data_dict, y='rating'):
         right_index=True,
         left_on='movieId'
     ).groupby('userId').sum().drop(columns=['movieId'])
+    # Normalize by max number of user of view -- lets get the most important one
+    user_genre = user_genre.div(user_genre.apply(max, axis=1), axis=0)
 
     features = pd.merge(
         pd.merge(
@@ -65,7 +67,11 @@ def get_features_dependent(data_dict, y='rating'):
     ).drop(columns=['timestamp'])
 
     return (
-        features[[col + 'User' for col in user_genre.columns if col + 'User' != y]],
+        features[
+            [col + 'User' for col in user_genre.columns if col + 'User' != y] + \
+            [col + 'Movie' for col in movie_genres.columns if col + 'Movie' != y] + \
+            ['userId', 'movieId']
+        ],
         features[y],
         user_genre,
     )

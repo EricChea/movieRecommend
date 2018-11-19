@@ -45,15 +45,15 @@ def main():
         'verbose': 0
     }
 
+    features = [col for col in X.columns if col not in ('userId', 'movieId')]
     kwargs = dict(
-        feature_name=[col for col in X.columns if col not in ('userId', 'movieId')],
+        feature_name=features,
         categorical_feature=[col for col in X.columns if col.endswith('Movie')]
     )
 
     # LGBM Dataset Formatting
-    lgtrain = lgb.Dataset(X_train, y_train, **kwargs)
-    lgvalid = lgb.Dataset(X_valid, y_valid, **kwargs)
-    lgvalid = lgb.Dataset(X_test, y_test, **kwargs)
+    lgtrain = lgb.Dataset(X_train[features], y_train, **kwargs)
+    lgvalid = lgb.Dataset(X_valid[features], y_valid, **kwargs)
 
     lgb_clf = lgb.train(
         lgbm_params,
@@ -72,14 +72,13 @@ def main():
     plt.savefig('feature_import.png')
 
     print("Model Evaluation Stage")
-    rmse = np.sqrt(
-        metrics.mean_squared_error(y_valid, lgb_clf.predict(X_valid))
-    )
+    mae = metrics.mean_absolute_error(y_valid, lgb_clf.predict(X_valid[features]))
 
-    print(f"RMSE: {rmse}")
-    lgpred = lgb_clf.predict(X_test)
+    print(f"MAE: {mae}")
+    lgpred = lgb_clf.predict(X_test[features])
     X_test['yhat_rating'] = lgpred.clip(0.0, 5.0)
     X_test['rating'] = y_test
+    X_test.to_csv('test_output.csv', index=False)
     lgb_clf.save_model('trees.predictrating.lgb')
 
 
