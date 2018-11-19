@@ -132,3 +132,50 @@ class Memory(object):
         """
         return {e: (self.similarity[i].reshape(-1, 1) * self.data).mean(axis=0)
                 for i, e in enumerate(self.entities)}
+
+
+def main():
+    """
+    Main runner for creating user - movie rankings.  Exports a list of movie
+    scores for each user as a pickles file.
+
+    Example
+    -------
+    python -m recommend.models.memory --data D:\data\ml-latest-small.zip
+    """
+
+    import argparse
+
+    import pandas as pd
+
+    from ..utils import data
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data', help="Path to the zip file containing data")
+    args = parser.parse_args()
+
+    data_dict = data.read_zipcsv(args.data)
+    ratings = data_dict['ratings']
+
+    # Create a user x movie matrix of ratings; fill with average user ratings 
+    # followed by 0 for users who have never rated.
+    table = pd.pivot_table(
+        ratings,
+        values='rating',
+        index=['userId'],
+        columns=['movieId'],
+        aggfunc=np.sum
+    ).fillna(ratings.mean(axis=0, skipna=True)).fillna(0)
+
+    # Create movie rankings for each user.
+    collab = Memory()
+    collab.fit(table, entities=table.index)
+    collab.similarity = (collab.similarity * 10000).astype('int16')
+    movie_scores = pd.DataFrame(collab.score_items()).T
+    movie_scores = movie_scores.apply(lambda x: x/x.sum(), axis=1)
+    pd.to_pickle(movie_scores, 'memory.movieranking.pkl')
+
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main())
